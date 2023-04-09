@@ -1,3 +1,8 @@
+html {
+  background: radial-gradient(rgba(9, 164, 87, 0.828) 2px, transparent 2px) 0 0 / 35px 35px,
+              radial-gradient(rgba(135, 104, 200, 0.5) 2px, transparent 2px) 17.5px 17.5px / 35px 35px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -7,7 +12,6 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fafafa;
   color: #212121;
   line-height: 1.5;
 }

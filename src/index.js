@@ -21,18 +21,23 @@ const renderCountryList = (countries) => {
   }
 };
 
-const renderCountryCard = (country) => {
+const createCardMarkup = (country) => {
   const { name, capital, population, flags, languages } = country;
-  const card = `
-    <div>
-      <img src="${flags.svg}" alt="${name} flag" />
-      <h2>${name}</h2>
-      <p><strong>Capital:</strong> ${capital}</p>
-      <p><strong>Population:</strong> ${population}</p>
-      <p><strong>Languages:</strong> ${languages.map(lang => lang.name).join(', ')}</p>
+  return `
+    <div style='margin: 10px; display: flex; align-items: center; gap: 1rem'>
+      <img src='${flags.svg}' alt='${name} flag' width=80 style='border: 1px solid #ccc'>
+      <span style='font-weight: 500; font-size: 3rem'>${name.official}</span>
     </div>
+    <ul style="list-style: none; margin: 10px; padding: 0;font-size: 1.5rem">
+      <li><span style='font-weight: 700'>Capital:</span><span style='margin-left: 0.3rem'>${capital}</span></li>
+      <li><span style='font-weight: 700'>Population:</span><span style='margin-left: 0.3rem'>${population}</span></li>
+      <li><span style='font-weight: 700'>Languages:</span><span style='margin-left: 0.3rem'>${Object.values(languages)}</span></li>
+    </ul>
   `;
-  countryInfo.innerHTML = card;
+};
+
+const renderCountryCard = (country) => {
+  countryInfo.innerHTML = createCardMarkup(country);
 };
 
 const handleError = (error) => {
@@ -51,7 +56,7 @@ const handleSearch = debounce((event) => {
           countryInfo.innerHTML = '';
         } else if (countries.length > 10) {
           Notiflix.Notify.warning('Too many matches found. Please enter a more specific name.');
-          renderCountryList(countries.slice(0, 10));
+          countryList.innerHTML = '';
           countryInfo.innerHTML = '';
         } else if (countries.length > 1 && countries.length <= 10) {
           renderCountryList(countries);
@@ -71,14 +76,7 @@ const handleSearch = debounce((event) => {
   } else {
     countryList.innerHTML = '';
     countryInfo.innerHTML = '';
-  }
-}, 300);
+ }
+}, 500);
 
 searchBox.addEventListener('input', handleSearch);
-
-searchBox.addEventListener('keyup', (event) => {
-  if (event.key === 'Backspace' && event.target.value.trim() === '') {
-    countryList.innerHTML = '';
-    countryInfo.innerHTML = '';
-  }
-});
