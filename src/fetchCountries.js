@@ -1,3 +1,4 @@
+fetchCountries
 export function fetchCountries(name) {
   return fetch(`https://restcountries.com/v3.1/name/${name}`)
     .then(response => response.json())
@@ -13,4 +14,3 @@ export function fetchCountries(name) {
       throw new Error('Unable to fetch countries');
     });
 }
-

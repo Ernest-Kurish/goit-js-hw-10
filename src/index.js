@@ -1,6 +1,7 @@
-
 import { debounce } from 'lodash';
 import { fetchCountries } from './fetchCountries.js';
+import Notiflix from 'notiflix';
+
 
 const searchBox = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
@@ -35,7 +36,7 @@ const renderCountryCard = (country) => {
 };
 
 const handleError = (error) => {
-  alert('Oops, something went wrong. Please try again later.');
+  Notiflix.Notify.failure('Oops, something went wrong. Please try again later.');
   console.error(error);
 };
 
@@ -45,11 +46,11 @@ const handleSearch = debounce((event) => {
     fetchCountries(searchTerm)
       .then(countries => {
         if (countries.length === 0) {
-          alert('Oops, there is no country with that name');
+          Notiflix.Notify.info('Oops, there is no country with that name');
           countryList.innerHTML = '';
           countryInfo.innerHTML = '';
         } else if (countries.length > 10) {
-          alert('Too many matches found. Please enter a more specific name.');
+          Notiflix.Notify.warning('Too many matches found. Please enter a more specific name.');
           renderCountryList(countries.slice(0, 10));
           countryInfo.innerHTML = '';
         } else if (countries.length > 1 && countries.length <= 10) {
@@ -60,29 +61,24 @@ const handleSearch = debounce((event) => {
           countryList.innerHTML = '';
         }
       })
-      .catch(handleError);
+      .catch(error => {
+        if (error.response && error.response.status === 404) {
+          Notiflix.Notify.info('Oops, there is no country with that name');
+        } else {
+          handleError(error);
+        }
+      });
   } else {
     countryList.innerHTML = '';
     countryInfo.innerHTML = '';
   }
-}, 500);
+}, 300);
 
 searchBox.addEventListener('input', handleSearch);
 
-countryList.addEventListener('click', (event) => {
-  if (event.target.tagName === 'LI') {
-    const countryName = event.target.textContent;
-    fetchCountries(countryName)
-      .then(([country]) => renderCountryCard(country))
-      .catch(handleError);
-  }
-});
-
-countryList.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' && event.target.tagName === 'LI') {
-    const countryName = event.target.textContent;
-    fetchCountries(countryName)
-      .then(([country]) => renderCountryCard(country))
-      .catch(handleError);
+searchBox.addEventListener('keyup', (event) => {
+  if (event.key === 'Backspace' && event.target.value.trim() === '') {
+    countryList.innerHTML = '';
+    countryInfo.innerHTML = '';
   }
 });
